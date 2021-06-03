@@ -1,0 +1,56 @@
+name: "Videosz"
+movieByURL:
+  - action: scrapeXPath
+    url:
+      - videosz.com
+    scraper: movieScraper
+    
+sceneByURL:
+  - action: scrapeXPath
+    url:
+      - videosz.com
+    scraper: sceneScraper
+    
+xPathScrapers:
+  movieScraper:
+    movie:
+      Name: //div[@id="dvd_title"]//span[@itemprop="name"]
+      Duration: 
+        selector: //h3/span[@class="orange strong"]/text()
+        postProcess:
+          - replace:
+            - regex: '(\d+)'
+              with: "00:$1:00"
+      Date:
+        selector: //span[@itemprop="datePublished"]/@content
+        postProcess:
+          - parseDate: 01/02/2006
+      Studio: 
+        Name: //span[@itemprop="productionCompany"]/span/text()
+      URL: //link[@rel="canonical"]/@href
+      FrontImage: //div[contains(@class,"left")]/a[contains(@href,"join")]/img/@src
+      BackImage: //div[contains(@class,"right")]/a[contains(@href,"join")]/img/@src
+  sceneScraper:
+    scene:
+      Title: 
+        selector: //div[@id="dvd_title"]//span[@itemprop="name"]
+        concat: " "
+        postProcess:
+          - replace:
+            - regex: '[\n\t]+'
+              with: ' '
+      Details: //meta[@name="description"]/@content
+      URL: //link[@rel="canonical"]/@href
+      Date:
+        selector: //span[@itemprop="datePublished"]/@content
+        postProcess:
+          - parseDate: 01/02/2006
+      Image: //img[@itemprop="image"]/@src
+      Studio:
+        Name: //span[@itemprop="productionCompany"]/span/text()
+      Tags: 
+        Name: //div[@itemprop="genre"]/h2/a
+      Performers: 
+        Name: //span[@itemprop="actor"]/span
+
+# Last Updated June 04, 2021
